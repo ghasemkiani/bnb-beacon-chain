@@ -1,0 +1,33 @@
+{
+  "name": "@ghasemkiani/binance-chain",
+  "version": "1.0.0",
+  "description": "Utilities for working with Binance DEX",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/ghasemkiani/binance-chain.git"
+  },
+  "keywords": [
+    "javascript",
+    "nodejs",
+    "blockchain",
+    "cryptocurrency",
+    "binance",
+    "binance-chain",
+    "dex"
+  ],
+  "author": "Ghasem Kiani",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://gitlab.com/ghasemkiani/binance-chain/issues"
+  },
+  "homepage": "https://gitlab.com/ghasemkiani/binance-chain#readme",
+  "dependencies": {
+    "@binance-chain/javascript-sdk": "^2.14.6",
+    "@ghasemkiani/commonbase": "github:ghasemkiani/commonbase",
+    "isomorphic-fetch": "^2.2.1"
+  }
+}
