@@ -147,3 +147,5 @@ cutil.extend(Dex.prototype, {
 	account: null,
 	balances: null,
 });
+
+module.exports = {Dex};
