@@ -13,6 +13,16 @@ const {cutil} = require("@ghasemkiani/commonbase/cutil");
 class Dex extends Base {
 	static SIDE = {BUY: 1, SELL: 2};
 	static TIMEINFORCE = {GTC: 1, IOC: 3};
+	network = "mainnet";
+	bncUrl = "https://dex.binance.org";
+	// rpcUrl = "https://seed1.longevito.io:443";
+	rpcUrl = "https://dataseed1.ninicoin.io:443";
+	_bncClient = null;
+	_rpcClient = null;
+	privateKey = null;
+	_address = null;
+	account = null;
+	balances = null;
 	get bncClient() {
 		if(!this._bncClient) {
 			this._bncClient = new BncClient(this.bncUrl);
@@ -134,18 +144,42 @@ class Dex extends Base {
 		}
 		return results;
 	}
+	dateStr(date) {
+		return date.toISOString();
+	}
+	strDate(str) {
+		return new Date(str);
+	}
+	async toGetTrades(start = new Date("2016-01-01"), end = new Date(), trades) {
+		const MAX_LIMIT = 1000;
+		trades = trades || {};
+		let address = this.address;
+		let url = `https://dex.binance.org/api/v1/orders/closed?address=${address}&limit=${MAX_LIMIT}&start=${start.getTime()}&end=${end.getTime()}`;
+		// console.log(url);
+		let rsp = await fetch(url);
+		let json = await rsp.json();
+		let orders = json.order;
+		if(orders) {
+			let date = end;
+			for(let {status, transactionTime, symbol, price, side, cumulateQuantity} of orders) {
+				date = this.strDate(transactionTime);
+				if(((status === "FullyFill") || (status === "PartialFill")) && (date >= start) && (date < end)) {
+					let [baseAsset, quoteAsset] = symbol.split("_");
+					let market = symbol in trades ? trades[symbol] : (trades[symbol] = {symbol, baseAsset, quoteAsset, buy: {base: 0, quote: 0, price: 0}, sell: {base: 0, quote: 0, price: 0}});
+					let base = Number(cumulateQuantity);
+					let quote = base * Number(price);
+					let data = market[(side === Dex.SIDE.BUY) ? "buy" : "sell"];
+					data.base += base;
+					data.quote += quote;
+					data.price = data.quote / data.base;
+				}
+			}
+			if(orders.length === MAX_LIMIT && date > start) {
+				await this.toGetTrades(start, date, trades);
+			}
+		}
+		return trades;
+	}
 }
-cutil.extend(Dex.prototype, {
-	network: "mainnet",
-	bncUrl: "https://dex.binance.org/",
-	rpcUrl: "https://seed1.longevito.io:443",
-	rpcUrl: "https://dataseed1.ninicoin.io:443",
-	_bncClient: null,
-	_rpcClient: null,
-	privateKey: null,
-	_address: null,
-	account: null,
-	balances: null,
-});
 
 module.exports = {Dex};
