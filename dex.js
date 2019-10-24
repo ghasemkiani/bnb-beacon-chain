@@ -14,6 +14,7 @@ class Dex extends Base {
 	static SIDE = {BUY: 1, SELL: 2};
 	static TIMEINFORCE = {GTC: 1, IOC: 3};
 	network = "mainnet";
+	apiUrl = "https://dex.binance.org";
 	bncUrl = "https://dex.binance.org";
 	// rpcUrl = "https://seed1.longevito.io:443";
 	rpcUrl = "https://dataseed1.ninicoin.io:443";
@@ -23,6 +24,7 @@ class Dex extends Base {
 	_address = null;
 	account = null;
 	balances = null;
+	
 	get bncClient() {
 		if(!this._bncClient) {
 			this._bncClient = new BncClient(this.bncUrl);
@@ -165,10 +167,11 @@ class Dex extends Base {
 				date = this.strDate(transactionTime);
 				if(((status === "FullyFill") || (status === "PartialFill")) && (date >= start) && (date < end)) {
 					let [baseAsset, quoteAsset] = symbol.split("_");
-					let market = symbol in trades ? trades[symbol] : (trades[symbol] = {symbol, baseAsset, quoteAsset, buy: {base: 0, quote: 0, price: 0}, sell: {base: 0, quote: 0, price: 0}});
+					let market = symbol in trades ? trades[symbol] : (trades[symbol] = {symbol, baseAsset, quoteAsset, buy: {n: 0, base: 0, quote: 0, price: 0}, sell: {n: 0, base: 0, quote: 0, price: 0}});
 					let base = Number(cumulateQuantity);
 					let quote = base * Number(price);
 					let data = market[(side === Dex.SIDE.BUY) ? "buy" : "sell"];
+					data.n++;
 					data.base += base;
 					data.quote += quote;
 					data.price = data.quote / data.base;
@@ -179,6 +182,47 @@ class Dex extends Base {
 			}
 		}
 		return trades;
+	}
+	async toCallApi(path, params) {
+		let url = `${this.apiUrl}${path}`;
+		let entries = Object.entries(Object(params));
+		if(entries.length > 0) {
+			url += "?" + entries.map(bi => bi.map(encodeURIComponent).join("=")).join("&");
+		}
+		// console.log(url);
+		let rsp = await fetch(url);
+		let json = await rsp.json();
+		return json;
+	}
+	
+	#oMarkets = null;
+	get oMarkets() {
+		if(!this.#oMarkets) {
+			this.#oMarkets = {};
+		}
+		return this.#oMarkets;
+	}
+	set oMarkets(oMarkets) {
+		this.#oMarkets = oMarkets;
+	}
+	get markets() {
+		return Object.values(this.oMarkets);
+	}
+	async toGetMarketInfos() {
+		this.oMarkets = null;
+		let infos = await this.toCallApi("/api/v1/markets", {offset: 0, limit: 1000});
+		for(let info of infos) {
+			info.symbol = info.base_asset_symbol + "_" + info.quote_asset_symbol;
+			this.oMarkets[info.symbol] = {info};
+		}
+	}
+	async toGetMarketTickers() {
+		let tickers = await this.toCallApi("/api/v1/ticker/24hr");
+		// console.log(`this.oMarkets: ${JSON.stringify(this.oMarkets)}`);
+		for(let ticker of tickers) {
+			// console.log(`ticker.symbol: ${ticker.symbol}`);
+			this.oMarkets[ticker.symbol].ticker = ticker;
+		}
 	}
 }
 
