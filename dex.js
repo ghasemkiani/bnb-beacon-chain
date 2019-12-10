@@ -74,7 +74,7 @@ class Dex extends Base {
 		for(let item of this.account.balances) {
 			let asset = item.symbol;
 			let obj = this.balances[asset] = {};
-			for(let k of Object.keys(item)) {
+			for(let k of ["free", "frozen", "locked"]) {
 				obj[k] = Number(item[k]);
 			}
 		}
@@ -220,9 +220,30 @@ class Dex extends Base {
 		let tickers = await this.toCallApi("/api/v1/ticker/24hr");
 		// console.log(`this.oMarkets: ${JSON.stringify(this.oMarkets)}`);
 		for(let ticker of tickers) {
+			let market = this.oMarkets[ticker.symbol];
 			// console.log(`ticker.symbol: ${ticker.symbol}`);
-			this.oMarkets[ticker.symbol].ticker = ticker;
+			market.ticker = ticker;
+			let {bidQuantity, bidPrice, askQuantity, askPrice} = ticker;
+			bidQuantity = parseFloat(bidQuantity);
+			bidPrice = parseFloat(bidPrice);
+			askQuantity = parseFloat(askQuantity);
+			askPrice = parseFloat(askPrice);
+			market.price = (bidQuantity * bidPrice + askQuantity * askPrice) / (bidQuantity + askQuantity);
 		}
+	}
+	val(amount, baseAsset, quoteAsset = "BNB") {
+		if(!this.#oMarkets) {
+			throw new Error("Market tickers have not been fetched yet!");
+		}
+		let res = 0;
+		if(`${baseAsset}_${quoteAsset}` in this.oMarkets) {
+			res = amount * this.oMarkets[`${baseAsset}_${quoteAsset}`].price;
+		} else if(`${quoteAsset}_${baseAsset}` in this.oMarkets) {
+			res = amount / this.oMarkets[`${baseAsset}_${quoteAsset}`].price;
+		} else {
+			res = this.val(this.val(amount, baseAsset, "BNB"), "BNB", quoteAsset);
+		}
+		return res;
 	}
 }
 
