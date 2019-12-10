@@ -241,7 +241,7 @@ class Dex extends Base {
 		} else if(`${baseAsset}_${quoteAsset}` in this.oMarkets) {
 			res = amount * this.oMarkets[`${baseAsset}_${quoteAsset}`].price;
 		} else if(`${quoteAsset}_${baseAsset}` in this.oMarkets) {
-			res = amount / this.oMarkets[`${baseAsset}_${quoteAsset}`].price;
+			res = amount / this.oMarkets[`${quoteAsset}_${baseAsset}`].price;
 		} else {
 			res = this.val(this.val(amount, baseAsset, "BNB"), "BNB", quoteAsset);
 		}
