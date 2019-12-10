@@ -236,7 +236,9 @@ class Dex extends Base {
 			throw new Error("Market tickers have not been fetched yet!");
 		}
 		let res = 0;
-		if(`${baseAsset}_${quoteAsset}` in this.oMarkets) {
+		if(baseAsset === quoteAsset) {
+			res = amount;
+		} else if(`${baseAsset}_${quoteAsset}` in this.oMarkets) {
 			res = amount * this.oMarkets[`${baseAsset}_${quoteAsset}`].price;
 		} else if(`${quoteAsset}_${baseAsset}` in this.oMarkets) {
 			res = amount / this.oMarkets[`${baseAsset}_${quoteAsset}`].price;
