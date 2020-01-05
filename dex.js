@@ -152,9 +152,8 @@ class Dex extends Base {
 	strDate(str) {
 		return new Date(str);
 	}
-	async toGetTrades(start = new Date("2016-01-01"), end = new Date(), trades) {
+	async toGetTrades(start = new Date("2016-01-01"), end = new Date(), trades = {}) {
 		const MAX_LIMIT = 1000;
-		trades = trades || {};
 		let address = this.address;
 		let url = `https://dex.binance.org/api/v1/orders/closed?address=${address}&limit=${MAX_LIMIT}&start=${start.getTime()}&end=${end.getTime()}`;
 		// console.log(url);
@@ -242,8 +241,10 @@ class Dex extends Base {
 			res = amount * this.oMarkets[`${baseAsset}_${quoteAsset}`].price;
 		} else if(`${quoteAsset}_${baseAsset}` in this.oMarkets) {
 			res = amount / this.oMarkets[`${quoteAsset}_${baseAsset}`].price;
-		} else {
+		} else if(quoteAsset !== "BNB") {
 			res = this.val(this.val(amount, baseAsset, "BNB"), "BNB", quoteAsset);
+		} else {
+			res = 0;
 		}
 		return res;
 	}
