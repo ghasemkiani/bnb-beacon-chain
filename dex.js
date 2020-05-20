@@ -219,15 +219,19 @@ class Dex extends Base {
 		let tickers = await this.toCallApi("/api/v1/ticker/24hr");
 		// console.log(`this.oMarkets: ${JSON.stringify(this.oMarkets)}`);
 		for(let ticker of tickers) {
-			let market = this.oMarkets[ticker.symbol];
 			// console.log(`ticker.symbol: ${ticker.symbol}`);
-			market.ticker = ticker;
-			let {bidQuantity, bidPrice, askQuantity, askPrice} = ticker;
-			bidQuantity = parseFloat(bidQuantity);
-			bidPrice = parseFloat(bidPrice);
-			askQuantity = parseFloat(askQuantity);
-			askPrice = parseFloat(askPrice);
-			market.price = (bidQuantity * bidPrice + askQuantity * askPrice) / (bidQuantity + askQuantity);
+			let market = this.oMarkets[ticker.symbol];
+			if(market) {
+				market.ticker = ticker;
+				let {bidQuantity, bidPrice, askQuantity, askPrice} = ticker;
+				bidQuantity = parseFloat(bidQuantity);
+				bidPrice = parseFloat(bidPrice);
+				askQuantity = parseFloat(askQuantity);
+				askPrice = parseFloat(askPrice);
+				market.price = (bidQuantity * bidPrice + askQuantity * askPrice) / (bidQuantity + askQuantity);
+			} else {
+				console.log(`Market ${ticker.symbol} not found!`);
+			}
 		}
 	}
 	val(amount, baseAsset, quoteAsset = "BNB") {
