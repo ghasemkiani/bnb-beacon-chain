@@ -13,17 +13,6 @@ const {cutil} = require("@ghasemkiani/commonbase/cutil");
 class Dex extends Base {
 	static SIDE = {BUY: 1, SELL: 2};
 	static TIMEINFORCE = {GTC: 1, IOC: 3};
-	network = "mainnet";
-	apiUrl = "https://dex.binance.org";
-	bncUrl = "https://dex.binance.org";
-	// rpcUrl = "https://seed1.longevito.io:443";
-	rpcUrl = "https://dataseed1.ninicoin.io:443";
-	_bncClient = null;
-	_rpcClient = null;
-	privateKey = null;
-	_address = null;
-	account = null;
-	balances = null;
 	
 	get bncClient() {
 		if(!this._bncClient) {
@@ -49,6 +38,12 @@ class Dex extends Base {
 		if(this.privateKey) {
 			await this.bncClient.setPrivateKey(this.privateKey);
 		}
+	}
+	async toSetMnemonic(mnemonic) {
+		this._address = null;
+		let privateKey = crypto.getPrivateKeyFromMnemonic(mnemonic);
+		await this.toSetPrivateKey(privateKey);
+		this.mnemonic = mnemonic;
 	}
 	async toSetPrivateKey(privateKey) {
 		this._address = null;
@@ -100,8 +95,8 @@ class Dex extends Base {
 	}
 	async toCreateAccount({password}) {
 		let account = await this.bncClient.createAccountWithMneomnic();
-		let privateKeyHex = account.privateKey;
-		account.keystore = crypto.generateKeyStore(privateKeyHex, password);
+		let privateKey = account.privateKey;
+		account.keystore = crypto.generateKeyStore(privateKey, password);
 		account.password = password;
 		return account;
 	}
@@ -238,6 +233,13 @@ class Dex extends Base {
 		if(!this.#oMarkets) {
 			throw new Error("Market tickers have not been fetched yet!");
 		}
+		// There are not USDT markets yet.
+		if(baseAsset === "USDT-6D8") {
+			baseAsset = "BUSD-BD1";
+		}
+		if(quoteAsset === "USDT-6D8") {
+			quoteAsset = "BUSD-BD1";
+		}
 		let res = 0;
 		if(baseAsset === quoteAsset) {
 			res = amount;
@@ -253,5 +255,19 @@ class Dex extends Base {
 		return res;
 	}
 }
+cutil.extend(Dex.prototype, {
+	network: "mainnet",
+	apiUrl: "https://dex.binance.org",
+	bncUrl: "https://dex.binance.org",
+	// rpcUrl: "https://seed1.longevito.io:443",
+	rpcUrl: "https://dataseed1.ninicoin.io:443",
+	_bncClient: null,
+	_rpcClient: null,
+	mnemonic: null,
+	privateKey: null,
+	_address: null,
+	account: null,
+	balances: null,
+});
 
 module.exports = {Dex};
