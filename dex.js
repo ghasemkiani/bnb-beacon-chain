@@ -39,11 +39,15 @@ class Dex extends Base {
 			await this.bncClient.setPrivateKey(this.privateKey);
 		}
 	}
+	async toSetKeyStore(keystore, password) {
+		this._address = null;
+		let privateKey = crypto.getPrivateKeyFromKeyStore(keyStore, password);
+		await this.toSetPrivateKey(privateKey);
+	}
 	async toSetMnemonic(mnemonic) {
 		this._address = null;
 		let privateKey = crypto.getPrivateKeyFromMnemonic(mnemonic);
 		await this.toSetPrivateKey(privateKey);
-		this.mnemonic = mnemonic;
 	}
 	async toSetPrivateKey(privateKey) {
 		this._address = null;
@@ -92,6 +96,10 @@ class Dex extends Base {
 	async toSell(arg) {
 		arg.side = "sell";
 		return await this.toPlaceOrder(arg);
+	}
+	generateKeyStore(password) {
+		let privateKey = this.privateKey;
+		return crypto.generateKeyStore(privateKey, password);;
 	}
 	async toCreateAccount({password}) {
 		let account = await this.bncClient.createAccountWithMneomnic();
@@ -155,6 +163,7 @@ class Dex extends Base {
 		let rsp = await fetch(url);
 		let json = await rsp.json();
 		let orders = json.order;
+		// console.log(JSON.stringify(orders));
 		if(orders) {
 			let date = end;
 			for(let {status, transactionTime, symbol, price, side, cumulateQuantity} of orders) {
@@ -176,6 +185,34 @@ class Dex extends Base {
 			}
 		}
 		return trades;
+	}
+	async toGetMyTrades(start = new Date("2016-01-01"), end = new Date()) {
+		let mytrades = {};
+		const MAX_LIMIT = 1000;
+		let address = this.address;
+		let offset = 0;
+		let limit = MAX_LIMIT;
+		let json = await this.toCallApi("/api/v1/trades", {address, start: start.getTime(), end: end.getTime(), offset, limit});
+		let trades = json.trade;
+		// console.log(JSON.stringify(trades));
+		if(trades) {
+			for(let {tradeId, blockHeight, symbol, price, quantity, buyerOrderId, sellerOrderId, buyerSource, sellerSource, buyerId, sellerId, buyFee, sellFee, baseAsset, quoteAsset, buySingleFee, sellSingleFee, tickType, time} of trades) {
+				let date = this.strDate(time);
+				if((date >= start) && (date < end)) {
+					let market = symbol in mytrades ? mytrades[symbol] : (mytrades[symbol] = {symbol, baseAsset, quoteAsset, buy: {n: 0, base: 0, quote: 0, price: 0}, sell: {n: 0, base: 0, quote: 0, price: 0}});
+					let base = Number(quantity);
+					let quote = base * Number(price);
+					// let side = (/buy/i.test(tickType)) ? "sell" : "buy";
+					let side = (buyerId === address) ? "buy" : "sell";
+					let data = market[side];
+					data.n++;
+					data.base += base;
+					data.quote += quote;
+					data.price = data.quote / data.base;
+				}
+			}
+		}
+		return mytrades;
 	}
 	async toCallApi(path, params) {
 		let url = `${this.apiUrl}${path}`;
@@ -225,7 +262,7 @@ class Dex extends Base {
 				askPrice = parseFloat(askPrice);
 				market.price = (bidQuantity * bidPrice + askQuantity * askPrice) / (bidQuantity + askQuantity);
 			} else {
-				console.log(`Market ${ticker.symbol} not found!`);
+				// console.log(`Market ${ticker.symbol} not found!`);
 			}
 		}
 	}
@@ -263,7 +300,6 @@ cutil.extend(Dex.prototype, {
 	rpcUrl: "https://dataseed1.ninicoin.io:443",
 	_bncClient: null,
 	_rpcClient: null,
-	mnemonic: null,
 	privateKey: null,
 	_address: null,
 	account: null,
