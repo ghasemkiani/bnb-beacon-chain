@@ -1,6 +1,6 @@
 {
   "name": "@ghasemkiani/binance-chain",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "description": "Utilities for working with Binance DEX",
   "main": "index.js",
   "scripts": {
@@ -26,11 +26,8 @@
   },
   "homepage": "https://gitlab.com/ghasemkiani/binance-chain#readme",
   "dependencies": {
-    "@binance-chain/javascript-sdk": "^2.16.2",
+    "@binance-chain/javascript-sdk": "^4.1.1",
     "@ghasemkiani/commonbase": "github:ghasemkiani/commonbase",
-    "isomorphic-fetch": "^2.2.1"
-  },
-  "devDependencies": {
-    "mocha": "^6.2.2"
+    "isomorphic-fetch": "^3.0.0"
   }
 }

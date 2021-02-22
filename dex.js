@@ -2,8 +2,7 @@
 
 const fetch = require("isomorphic-fetch");
 
-const BncClient = require("@binance-chain/javascript-sdk");
-const {rpc: RpcClient, crypto} = BncClient;
+const {BncClient, rpc: RpcClient, crypto} = require("@binance-chain/javascript-sdk");
 
 const {Base} = require("@ghasemkiani/commonbase/base");
 const {Inputter} = require("@ghasemkiani/commonbase/sys/inputter");
