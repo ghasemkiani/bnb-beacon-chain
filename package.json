@@ -1,6 +1,6 @@
 {
   "name": "@ghasemkiani/binance-chain",
-  "version": "1.6.2",
+  "version": "1.7.0",
   "description": "Utilities for working with Binance DEX",
   "main": "index.js",
   "scripts": {
