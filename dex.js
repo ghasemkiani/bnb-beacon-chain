@@ -85,6 +85,7 @@ class Dex extends Base {
 		// let timeinforce = !!stat ? Dex.TIMEINFORCE.IOC : Dex.TIMEINFORCE.GTC;
 		// let sequence = this.account ? this.account.sequence || 0 : 0;
 		// let result = await this.bncClient.placeOrder(address, symbol, side, price, quantity, sequence, timeinforce);
+		console.log({address, symbol, side, price, quantity});
 		let result = await this.bncClient.placeOrder(address, symbol, side, price, quantity);
 		return result;
 	}
@@ -189,10 +190,18 @@ class Dex extends Base {
 		let mytrades = {};
 		const MAX_LIMIT = 1000;
 		let address = this.address;
-		let offset = 0;
 		let limit = MAX_LIMIT;
-		let json = await this.toCallApi("/api/v1/trades", {address, start: start.getTime(), end: end.getTime(), offset, limit});
-		let trades = json.trade;
+		let trades = [];
+		let offset = 0;
+		let total = 1;
+		while(true) {
+			let json = await this.toCallApi("/api/v1/trades", {address, start: start.getTime(), end: end.getTime(), offset, limit, total});
+			trades = trades.concat(json.trade);
+			offset += json.trade.length;
+			if(trades.length >= json.total) {
+				break;
+			}
+		}
 		// console.log(JSON.stringify(trades));
 		if(trades) {
 			for(let {tradeId, blockHeight, symbol, price, quantity, buyerOrderId, sellerOrderId, buyerSource, sellerSource, buyerId, sellerId, buyFee, sellFee, baseAsset, quoteAsset, buySingleFee, sellSingleFee, tickType, time} of trades) {
@@ -203,6 +212,35 @@ class Dex extends Base {
 					let quote = base * Number(price);
 					// let side = (/buy/i.test(tickType)) ? "sell" : "buy";
 					let side = (buyerId === address) ? "buy" : "sell";
+					let data = market[side];
+					data.n++;
+					data.base += base;
+					data.quote += quote;
+					data.price = data.quote / data.base;
+				}
+			}
+		}
+		return mytrades;
+	}
+	async toGetAllTrades(start = new Date("2016-01-01"), end = new Date()) {
+		let mytrades = {};
+		const MAX_LIMIT = 1000;
+		let offset = 0;
+		let limit = MAX_LIMIT;
+		let json = await this.toCallApi("/api/v1/trades", {start: start.getTime(), end: end.getTime(), offset, limit});
+		let trades = json.trade;
+		// console.log(JSON.stringify(trades));
+		if(trades) {
+			for(let {tradeId, blockHeight, symbol, price, quantity, buyerOrderId, sellerOrderId, buyerSource, sellerSource, buyerId, sellerId, buyFee, sellFee, baseAsset, quoteAsset, buySingleFee, sellSingleFee, tickType, time} of trades) {
+				let date = this.strDate(time);
+				if((date >= start) && (date < end)) {
+					if(!(symbol in mytrades)) {
+						mytrades[symbol] = {symbol, baseAsset, quoteAsset, buy: {n: 0, base: 0, quote: 0, price: 0}, sell: {n: 0, base: 0, quote: 0, price: 0}};
+					}
+					let market = mytrades[symbol];
+					let base = Number(quantity);
+					let quote = base * Number(price);
+					let side = (/buy/i.test(tickType)) ? "sell" : "buy";
 					let data = market[side];
 					data.n++;
 					data.base += base;
