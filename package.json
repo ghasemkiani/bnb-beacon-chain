@@ -1,6 +1,6 @@
 {
   "name": "@ghasemkiani/binance-chain",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "Utilities for working with Binance DEX",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/ghasemkiani/binance-chain.git"
+    "url": "git+https://github.com/ghasemkiani/binance-chain.git"
   },
   "keywords": [
     "javascript",
@@ -22,9 +22,9 @@
   "author": "Ghasem Kiani",
   "license": "MIT",
   "bugs": {
-    "url": "https://gitlab.com/ghasemkiani/binance-chain/issues"
+    "url": "https://github.com/ghasemkiani/binance-chain/issues"
   },
-  "homepage": "https://gitlab.com/ghasemkiani/binance-chain#readme",
+  "homepage": "https://github.com/ghasemkiani/binance-chain#readme",
   "dependencies": {
     "@binance-chain/javascript-sdk": "^4.1.1",
     "@ghasemkiani/base": "github:ghasemkiani/base",
