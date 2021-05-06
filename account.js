@@ -1,8 +1,8 @@
 const bech32 = require("bech32");
 const {BncClient, rpc: RpcClient, crypto} = require("@binance-chain/javascript-sdk");
 
-const {cutil} = require("@ghasemkiani/commonbase/cutil");
-const {Base} = require("@ghasemkiani/commonbase/base");
+const {cutil} = require("@ghasemkiani/base/cutil");
+const {Obj: Base} = require("@ghasemkiani/base/obj");
 const {HDWallet} = require("@ghasemkiani/hdwallet");
 
 class Account extends Base {

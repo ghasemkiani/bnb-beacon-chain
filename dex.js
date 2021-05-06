@@ -4,10 +4,10 @@ const fetch = require("isomorphic-fetch");
 
 const {BncClient, rpc: RpcClient, crypto} = require("@binance-chain/javascript-sdk");
 
-const {Base} = require("@ghasemkiani/commonbase/base");
-const {Inputter} = require("@ghasemkiani/commonbase/sys/inputter");
-const {quantity: quant} = require("@ghasemkiani/commonbase/util/quantity");
-const {cutil} = require("@ghasemkiani/commonbase/cutil");
+const {Obj: Base} = require("@ghasemkiani/base/obj");
+const {Inputter} = require("@ghasemkiani/io/inputter");
+const {quantity: quant} = require("@ghasemkiani/base-utils/quantity");
+const {cutil} = require("@ghasemkiani/base/cutil");
 
 class Dex extends Base {
 	static SIDE = {BUY: 1, SELL: 2};
