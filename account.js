@@ -1,4 +1,4 @@
-const bech32 = require("bech32");
+const {bech32} = require("bech32");
 const {BncClient, rpc: RpcClient, crypto} = require("@binance-chain/javascript-sdk");
 
 const {cutil} = require("@ghasemkiani/base/cutil");
