@@ -1,7 +1,7 @@
-const {cutil} = require("@ghasemkiani/base/cutil");
-const {Obj: Base} = require("@ghasemkiani/base/obj");
+import {cutil} from "@ghasemkiani/base";
+import {Obj} from "@ghasemkiani/base";
 
-class Util extends Base {
+class Util extends Obj {
 	tok(tokenId) {
 		return this.assets[tokenId];
 	}
@@ -85,4 +85,4 @@ cutil.extend(Util.prototype, {
 
 const util = new Util();
 
-module.exports = {Util, util};
+export {Util, util};

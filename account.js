@@ -1,11 +1,11 @@
-const {bech32} = require("bech32");
-const {BncClient, rpc: RpcClient, crypto} = require("@binance-chain/javascript-sdk");
+import {bech32} from "bech32";
+import {BncClient, rpc as RpcClient, crypto} from "@binance-chain/javascript-sdk";
 
-const {cutil} = require("@ghasemkiani/base/cutil");
-const {Obj: Base} = require("@ghasemkiani/base/obj");
-const {HDWallet} = require("@ghasemkiani/hdwallet");
+import {cutil} from "@ghasemkiani/base";
+import {Obj} from "@ghasemkiani/base";
+import {HDWallet} from "@ghasemkiani/hdwallet";
 
-class Account extends Base {
+class Account extends Obj {
 	get bncClient() {
 		if(!this._bncClient) {
 			this._bncClient = new BncClient(this.bncUrl);
@@ -84,4 +84,4 @@ cutil.extend(Account.prototype, {
 	_address: null,
 });
 
-module.exports = {Account};
+export {Account};

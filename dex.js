@@ -1,15 +1,15 @@
 //	@ghasemkiani/binance-chain/dex
 
-const fetch = require("isomorphic-fetch");
+import fetch from "isomorphic-fetch";
 
-const {BncClient, rpc: RpcClient, crypto} = require("@binance-chain/javascript-sdk");
+import {BncClient, rpc as RpcClient, crypto} from "@binance-chain/javascript-sdk";
 
-const {Obj: Base} = require("@ghasemkiani/base/obj");
-const {Inputter} = require("@ghasemkiani/io/inputter");
-const {quantity: quant} = require("@ghasemkiani/base-utils/quantity");
-const {cutil} = require("@ghasemkiani/base/cutil");
+import {Obj} from "@ghasemkiani/base";
+import {Inputter} from "@ghasemkiani/io";
+import {quantity as quant} from "@ghasemkiani/base-utils";
+import {cutil} from "@ghasemkiani/base";
 
-class Dex extends Base {
+class Dex extends Obj {
 	static SIDE = {BUY: 1, SELL: 2};
 	static TIMEINFORCE = {GTC: 1, IOC: 3};
 	
@@ -343,4 +343,4 @@ cutil.extend(Dex.prototype, {
 	balances: null,
 });
 
-module.exports = {Dex};
+export {Dex};

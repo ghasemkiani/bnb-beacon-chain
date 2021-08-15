@@ -1,5 +1,11 @@
 //	@ghasemkiani/binance-chain
 
-const dex = require("@ghasemkiani/binance-chain/dex");
+import {Util, util} from "./util.js";
+import {Account} from "./account.js";
+import {Dex} from "./dex.js";
 
-module.exports = {dex};
+export {
+	Util, util,
+	Account,
+	Dex,
+};
