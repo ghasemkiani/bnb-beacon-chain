@@ -55,9 +55,9 @@ class Account extends Obj {
 		return addressEth;
 	}
 	set addressEth(addressEth) {
-		let address = addressEth;
-		if(!cutil.isNilOrEmptyString(address)) {
-			let words = bech32.toWords(Buffer.from(address, "utf8"));
+		let address = null;
+		if(!cutil.isNilOrEmptyString(addressEth)) {
+			let words = bech32.toWords(Buffer.from(addressEth.substring(2), "hex"));
 			address = bech32.encode(/mainnet/i.test(this.network) ? "bnb" : "tbnb", words);
 		}
 		this.address = address;

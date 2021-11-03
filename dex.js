@@ -8,6 +8,7 @@ import {Obj} from "@ghasemkiani/base";
 import {Inputter} from "@ghasemkiani/io";
 import {quantity as quant} from "@ghasemkiani/base-utils";
 import {cutil} from "@ghasemkiani/base";
+import {util as utilBc} from "./util.js";
 
 class Dex extends Obj {
 	static SIDE = {BUY: 1, SELL: 2};
@@ -303,6 +304,14 @@ class Dex extends Obj {
 			}
 		}
 	}
+	bal(asset) {
+		let balance = 0;
+		let obj = this.balances[asset] || this.balances[utilBc.tok(asset)];
+		if (obj) {
+			balance = obj.free + obj.frozen + obj.locked;
+		}
+		return balance;
+	}
 	val(amount, baseAsset, quoteAsset = "BNB") {
 		if(!this.#oMarkets) {
 			throw new Error("Market tickers have not been fetched yet!");
@@ -333,8 +342,8 @@ cutil.extend(Dex.prototype, {
 	network: "mainnet",
 	apiUrl: "https://dex.binance.org",
 	bncUrl: "https://dex.binance.org",
-	// rpcUrl: "https://seed1.longevito.io:443",
-	rpcUrl: "https://dataseed1.ninicoin.io:443",
+	rpcUrl: "https://seed1.longevito.io:443",
+	// rpcUrl: "https://dataseed1.ninicoin.io:443",
 	_bncClient: null,
 	_rpcClient: null,
 	privateKey: null,
