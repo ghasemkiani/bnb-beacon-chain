@@ -27,11 +27,11 @@
   },
   "homepage": "https://github.com/ghasemkiani/binance-chain#readme",
   "dependencies": {
-    "@binance-chain/javascript-sdk": "^4.1.1",
+    "@binance-chain/javascript-sdk": "^4.2.0",
     "@ghasemkiani/base": "github:ghasemkiani/base",
     "@ghasemkiani/base-utils": "github:ghasemkiani/base-utils",
-    "@ghasemkiani/io": "github:ghasemkiani/io",
     "@ghasemkiani/hdwallet": "github:ghasemkiani/hdwallet",
+    "@ghasemkiani/io": "github:ghasemkiani/io",
     "bech32": "^2.0.0",
     "isomorphic-fetch": "^3.0.0"
   }
