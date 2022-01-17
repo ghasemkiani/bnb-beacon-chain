@@ -187,7 +187,7 @@ class Dex extends Obj {
 		}
 		return trades;
 	}
-	async toGetMyTrades(start = new Date("2016-01-01"), end = new Date()) {
+	async toGetMyTrades0(start = new Date("2016-01-01"), end = new Date()) {
 		let mytrades = {};
 		const MAX_LIMIT = 1000;
 		let address = this.address;
@@ -203,6 +203,12 @@ class Dex extends Obj {
 				break;
 			}
 		}
+		return trades;
+	}
+	async toGetMyTrades(start = new Date("2016-01-01"), end = new Date()) {
+		let address = this.address;
+		let mytrades = {};
+		let trades = await this.toGetMyTrades0(start, end);
 		// console.log(JSON.stringify(trades));
 		if(trades) {
 			for(let {tradeId, blockHeight, symbol, price, quantity, buyerOrderId, sellerOrderId, buyerSource, sellerSource, buyerId, sellerId, buyFee, sellFee, baseAsset, quoteAsset, buySingleFee, sellSingleFee, tickType, time} of trades) {
@@ -277,11 +283,21 @@ class Dex extends Obj {
 	get markets() {
 		return Object.values(this.oMarkets);
 	}
+	sym(base, quote) {
+		return `${utilBc.tok(base)}_${utilBc.tok(quote)}`;
+	}
+	market(base, quote) {
+		return this.oMarkets[this.sym(base, quote)];
+	}
 	async toGetMarketInfos() {
 		this.oMarkets = null;
 		let infos = await this.toCallApi("/api/v1/markets", {offset: 0, limit: 1000});
 		for(let info of infos) {
 			info.symbol = info.base_asset_symbol + "_" + info.quote_asset_symbol;
+			info.lot = -Math.floor(Math.log(info.lot_size) / Math.log(10));
+			info.tick = -Math.floor(Math.log(info.tick_size) / Math.log(10));
+			info.tickSize = cutil.asNumber(info.tick_size);
+			info.lotSize = cutil.asNumber(info.lot_size);
 			this.oMarkets[info.symbol] = {info};
 		}
 	}
