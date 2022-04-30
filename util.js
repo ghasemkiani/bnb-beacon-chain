@@ -13,10 +13,12 @@ cutil.extend(Util.prototype, {
 	ASSET_PRECISION: 8,
 	assets: {
 		"ADA": "ADA-9F4",
+		"AERGO": "AERGO-46B",
 		"ANKR": "ANKR-E97",
 		"ATOM": "ATOM-596",
 		"AVA": "AVA-645",
 		"AWC": "AWC-986",
+		"AXPR": "AXPR-777",
 		"BAKE": "BAKE-5E0",
 		"BAND": "BAND-34B",
 		"BCH": "BCH-1FD",
