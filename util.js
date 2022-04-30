@@ -74,6 +74,8 @@ cutil.extend(Util.prototype, {
 		"TUSD": "TUSDB-888",
 		"TUSDB": "TUSDB-888",
 		"TWT": "TWT-8C2",
+		"UGAS": "UGAS-B0C",
+		"UND": "UND-EBC",
 		"UNI": "UNI-DD8",
 		"USDC": "USDC-CD2",
 		"USDS": "USDSB-1AC",
