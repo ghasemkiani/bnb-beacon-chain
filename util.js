@@ -85,6 +85,8 @@ cutil.extend(Util.prototype, {
 		"SPNDB": "SPNDB-916",
 		"SWINGBY": "SWINGBY-888",
 		"SXP": "SXP-CCC",
+		"TOMO": "TOMOB-4BC",
+		"TOMOB": "TOMOB-4BC",
 		"TOP": "TOP-491",
 		"TRX": "TRXB-2E6",
 		"TRXB": "TRXB-2E6",
