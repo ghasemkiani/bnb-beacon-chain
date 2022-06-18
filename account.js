@@ -39,7 +39,9 @@ class Account extends Obj {
 	}
 	get address() {
 		if(!this._address) {
-			this._address = this.bncClient.getClientKeyAddress();
+			let prefix = /^mainnet$/.test(this.network) ? "bnb" : "tbnb";
+			this._address = crypto.getAddressFromPrivateKey(this.key, prefix);
+			// this._address = this.bncClient.getClientKeyAddress();
 		}
 		return this._address;
 	}
