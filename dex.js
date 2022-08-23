@@ -156,6 +156,42 @@ class Dex extends Obj {
 	strDate(str) {
 		return new Date(str);
 	}
+	async toGetOrders0() {
+		let dex = this;
+		let {address} = dex;
+		let json = await dex.toCallApi("/api/v1/orders/open", {address});
+		let orders = json.order;
+		return orders || [];
+	}
+	async toGetOrders() {
+		let dex = this;
+		let orders0 = await dex.toGetOrders0();
+		let orders = {};
+		for(let order of orders0) {
+			let {orderId, symbol, owner, price, quantity, cumulateQuantity, fee, orderCreateTime, transactionTime, status, timeInForce, side: nSide, type, tradeId, lastExecutedPrice, lastExecutedQuantity, transactionHash} = order;
+			let date = dex.strDate(transactionTime);
+			let [baseAsset, quoteAsset] = symbol.split("_");
+			let [base, quote] = [baseAsset, quoteAsset].map(tok => utilBc.token(tok));
+			let market = symbol in orders ? orders[symbol] : (orders[symbol] = {buy: [], sell: []});
+			let amount = Number(quantity) - Number(cumulateQuantity);
+			price = Number(price);
+			let total = amount * price;
+			let side = (nSide === Dex.SIDE.BUY) ? "buy" : "sell";
+			market[side].push({order, orderId, symbol, date, side, base, quote, baseAsset, quoteAsset, amount, total, price});
+		}
+		for (let market of Object.values(orders)) {
+			market.buy.sort(({price: price1}, {price: price2}) => price2 - price1);
+			market.sell.sort(({price: price1}, {price: price2}) => price1 - price2);
+			for (let side of ["buy", "sell"]) {
+				let arr = market[side];
+				arr.n = arr.length;
+				arr.amount = arr.reduce((a, {amount: b}) => a += b, 0);
+				arr.total = arr.reduce((a, {total: b}) => a += b, 0);
+				arr.price = (arr.total / arr.amount) || 0;
+			}
+		}
+		return orders;
+	}
 	async toGetTrades(start = new Date("2016-01-01"), end = new Date(), trades = {}) {
 		const MAX_LIMIT = 1000;
 		let address = this.address;
