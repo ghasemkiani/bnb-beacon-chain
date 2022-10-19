@@ -5,6 +5,8 @@ import {cutil} from "@ghasemkiani/base";
 import {Obj} from "@ghasemkiani/base";
 import {HDWallet} from "@ghasemkiani/hdwallet";
 
+import {util as utilBc} from "./util.js";
+
 class Account extends Obj {
 	get bncClient() {
 		if(!this._bncClient) {
@@ -73,6 +75,33 @@ class Account extends Obj {
 		await this.bncClient.initChain();
 		await this.toUpdateKey();
 	}
+	async toGetBalances() {
+		let account = this;
+		let {address} = account;
+		let response = await account.bncClient.getAccount(address);
+		if(response.status !== 200) {
+			throw new Error(`Failed to get account for address: ${address}`);
+		}
+		account._account = response.result;
+		account.balances = {};
+		for(let item of account._account.balances) {
+			let asset = item.symbol;
+			let obj = account.balances[asset] = {total: 0};
+			for(let k of ["free", "frozen", "locked"]) {
+				obj.total += obj[k] = Number(item[k]);
+			}
+		}
+	}
+	bal(tokId) {
+		let account = this;
+		if (cutil.isNil(account.balances)) {
+			return null;
+		}
+		if ("-".indexOf(tokId) < 0) {
+			tokId = utilBc.tok(tokId);
+		}
+		return account.balances[tokId]?.total || 0;
+	}
 }
 cutil.extend(Account.prototype, {
 	network: "mainnet",
@@ -84,6 +113,8 @@ cutil.extend(Account.prototype, {
 	mnemonic: null,
 	_key: null,
 	_address: null,
+	_account: null,
+	balances: null,
 });
 
 export {Account};
