@@ -54,6 +54,7 @@ cutil.extend(Util.prototype, {
 		"EOSBULL": "EOSBULL-F0D",
 		"ETC": "ETC-758",
 		"ETH": "ETH-1C9",
+		"ETHW": "ETHW-478",
 		"ETHBEAR": "ETHBEAR-B2B",
 		"ETHBULL": "ETHBULL-D33",
 		"EVT": "EVT-49B",
