@@ -1,6 +1,6 @@
 {
-	"name": "@ghasemkiani/bnb-smart-chain",
-	"version": "2.3.1",
+	"name": "@ghasemkiani/bnb-beacon-chain",
+	"version": "2.3.2",
 	"description": "Utilities for working with Binance DEX",
 	"type": "module",
 	"main": "index.js",
@@ -9,7 +9,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/ghasemkiani/bnb-smart-chain.git"
+		"url": "git+https://github.com/ghasemkiani/bnb-beacon-chain.git"
 	},
 	"keywords": [
 		"javascript",
@@ -23,9 +23,9 @@
 	"author": "Ghasem Kiani",
 	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/ghasemkiani/bnb-smart-chain/issues"
+		"url": "https://github.com/ghasemkiani/bnb-beacon-chain/issues"
 	},
-	"homepage": "https://github.com/ghasemkiani/bnb-smart-chain#readme",
+	"homepage": "https://github.com/ghasemkiani/bnb-beacon-chain#readme",
 	"dependencies": {
 		"@binance-chain/javascript-sdk": "^4.2.0",
 		"@ghasemkiani/base": "github:ghasemkiani/base",
