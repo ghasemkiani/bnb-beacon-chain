@@ -97,7 +97,7 @@ class Account extends Obj {
 		if (cutil.isNil(account.balances)) {
 			return null;
 		}
-		if ("-".indexOf(tokId) < 0) {
+		if (tokId.indexOf("-") < 0) {
 			tokId = utilBc.tok(tokId);
 		}
 		return account.balances[tokId]?.total || 0;
