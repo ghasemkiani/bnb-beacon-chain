@@ -8,6 +8,21 @@ import {HDWallet} from "@ghasemkiani/hdwallet";
 import {util as utilBc} from "./util.js";
 
 class Account extends Obj {
+	static {
+		cutil.extend(this.prototype, {
+			network: "mainnet",
+			apiUrl: "https://dex.binance.org",
+			bncUrl: "https://dex.binance.org",
+			rpcUrl: "https://dataseed1.ninicoin.io",
+			_bncClient: null,
+			_rpcClient: null,
+			mnemonic: null,
+			_key: null,
+			_address: null,
+			_account: null,
+			balances: null,
+		});
+	}
 	get bncClient() {
 		if(!this._bncClient) {
 			this._bncClient = new BncClient(this.bncUrl);
@@ -102,19 +117,14 @@ class Account extends Obj {
 		}
 		return account.balances[tokId]?.total || 0;
 	}
+	async toTransfer({address, amount, asset, memo}) {
+		let fromAddress = this.address;
+		let toAddress = address;
+		// let sequence = this.account ? this.account.sequence || 0 : 0;
+		// let result = await this.bncClient.transfer(fromAddress, toAddress, amount, asset, memo, sequence);
+		let result = await this.bncClient.transfer(fromAddress, toAddress, amount, asset, memo);
+		return result;
+	}
 }
-cutil.extend(Account.prototype, {
-	network: "mainnet",
-	apiUrl: "https://dex.binance.org",
-	bncUrl: "https://dex.binance.org",
-	rpcUrl: "https://dataseed1.ninicoin.io",
-	_bncClient: null,
-	_rpcClient: null,
-	mnemonic: null,
-	_key: null,
-	_address: null,
-	_account: null,
-	balances: null,
-});
 
 export {Account};

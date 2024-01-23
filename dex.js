@@ -1,4 +1,4 @@
-//	@ghasemkiani/binance-chain/dex
+//	@ghasemkiani/bnb-beacon-chain/dex
 
 import fetch from "isomorphic-fetch";
 

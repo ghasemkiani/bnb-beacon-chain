@@ -1,6 +1,6 @@
 {
 	"name": "@ghasemkiani/bnb-beacon-chain",
-	"version": "2.3.2",
+	"version": "2.4.0",
 	"description": "Utilities for working with Binance DEX",
 	"type": "module",
 	"main": "index.js",

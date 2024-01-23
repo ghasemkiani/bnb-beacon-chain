@@ -1,4 +1,4 @@
-//	@ghasemkiani/binance-chain
+//	@ghasemkiani/bnb-beacon-chain
 
 import {Util, util} from "./util.js";
 import {Account} from "./account.js";
